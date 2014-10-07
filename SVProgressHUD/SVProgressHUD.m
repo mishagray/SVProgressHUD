@@ -479,18 +479,7 @@ static const CGFloat SVProgressHUDParallaxDepthPoints = 10;
         }
     }
     
-    if(notification) {
-        [UIView animateWithDuration:animationDuration
-                              delay:0
-                            options:UIViewAnimationOptionAllowUserInteraction
-                         animations:^{
-                             [self moveToPoint:newCenter rotateAngle:rotateAngle];
-                         } completion:NULL];
-    }
-    
-    else {
-        [self moveToPoint:newCenter rotateAngle:rotateAngle];
-    }
+    [self moveToPoint:newCenter rotateAngle:rotateAngle];
     
 }
 
@@ -573,24 +562,18 @@ static const CGFloat SVProgressHUDParallaxDepthPoints = 10;
             self.hudView.alpha = 0;
         }
         
-        [UIView animateWithDuration:0.0
-                              delay:0
-                            options:UIViewAnimationOptionAllowUserInteraction | UIViewAnimationCurveEaseOut | UIViewAnimationOptionBeginFromCurrentState
-                         animations:^{
-                             self.hudView.transform = CGAffineTransformScale(self.hudView.transform, 1/1.3, 1/1.3);
-                             
-                             if(self.isClear) // handle iOS 7 UIToolbar not answer well to hierarchy opacity change
-                                 self.hudView.alpha = 1;
-                             else
-                                 self.alpha = 1;
-                         }
-                         completion:^(BOOL finished){
-                             [[NSNotificationCenter defaultCenter] postNotificationName:SVProgressHUDDidAppearNotification
-                                                                                 object:nil
-                                                                               userInfo:userInfo];
-                             UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
-                             UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, string);
-                         }];
+        self.hudView.transform = CGAffineTransformScale(self.hudView.transform, 1/1.3, 1/1.3);
+        
+        if(self.isClear) // handle iOS 7 UIToolbar not answer well to hierarchy opacity change
+            self.hudView.alpha = 1;
+        else
+            self.alpha = 1;
+
+        [[NSNotificationCenter defaultCenter] postNotificationName:SVProgressHUDDidAppearNotification
+                                                            object:nil
+                                                          userInfo:userInfo];
+        UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
+        UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, string);
         
         [self setNeedsDisplay];
     }
@@ -651,48 +634,43 @@ static const CGFloat SVProgressHUDParallaxDepthPoints = 10;
                                                       userInfo:userInfo];
     
     self.activityCount = 0;
-    [UIView animateWithDuration:0.0
-                          delay:0
-                        options:UIViewAnimationCurveEaseIn | UIViewAnimationOptionAllowUserInteraction
-                     animations:^{
-                         self.hudView.transform = CGAffineTransformScale(self.hudView.transform, 0.8, 0.8);
-                         if(self.isClear) // handle iOS 7 UIToolbar not answer well to hierarchy opacity change
-                             self.hudView.alpha = 0;
-                         else
-                             self.alpha = 0;
-                     }
-                     completion:^(BOOL finished){
-                         if(self.alpha == 0 || self.hudView.alpha == 0) {
-                             self.alpha = 0;
-                             self.hudView.alpha = 0;
-                             
-                             [[NSNotificationCenter defaultCenter] removeObserver:self];
-                             [self cancelRingLayerAnimation];
-                             [_hudView removeFromSuperview];
-                             _hudView = nil;
-                             
-                             [_overlayView removeFromSuperview];
-                             _overlayView = nil;
-                             
-                             [_indefiniteAnimatedView removeFromSuperview];
-                             _indefiniteAnimatedView = nil;
-                             
-                             UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
-                             
-                             [[NSNotificationCenter defaultCenter] postNotificationName:SVProgressHUDDidDisappearNotification
-                                                                                 object:nil
-                                                                               userInfo:userInfo];
-                             
-                             // Tell the rootViewController to update the StatusBar appearance
-                             UIViewController *rootController = [[UIApplication sharedApplication] keyWindow].rootViewController;
-                             if ([rootController respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)]) {
-                                 [rootController setNeedsStatusBarAppearanceUpdate];
-                             }
-                             // uncomment to make sure UIWindow is gone from app.windows
-                             //NSLog(@"%@", [UIApplication sharedApplication].windows);
-                             //NSLog(@"keyWindow = %@", [UIApplication sharedApplication].keyWindow);
-                         }
-                     }];
+
+    self.hudView.transform = CGAffineTransformScale(self.hudView.transform, 0.8, 0.8);
+    if(self.isClear) // handle iOS 7 UIToolbar not answer well to hierarchy opacity change
+        self.hudView.alpha = 0;
+    else
+        self.alpha = 0;
+
+    if(self.alpha == 0 || self.hudView.alpha == 0) {
+        self.alpha = 0;
+        self.hudView.alpha = 0;
+        
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
+        [self cancelRingLayerAnimation];
+        [_hudView removeFromSuperview];
+        _hudView = nil;
+        
+        [_overlayView removeFromSuperview];
+        _overlayView = nil;
+        
+        [_indefiniteAnimatedView removeFromSuperview];
+        _indefiniteAnimatedView = nil;
+        
+        UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:SVProgressHUDDidDisappearNotification
+                                                            object:nil
+                                                          userInfo:userInfo];
+        
+        // Tell the rootViewController to update the StatusBar appearance
+        UIViewController *rootController = [[UIApplication sharedApplication] keyWindow].rootViewController;
+        if ([rootController respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)]) {
+            [rootController setNeedsStatusBarAppearanceUpdate];
+        }
+        // uncomment to make sure UIWindow is gone from app.windows
+        //NSLog(@"%@", [UIApplication sharedApplication].windows);
+        //NSLog(@"keyWindow = %@", [UIApplication sharedApplication].keyWindow);
+    }
 }
 
 
@@ -908,7 +886,7 @@ static const CGFloat SVProgressHUDParallaxDepthPoints = 10;
 }
 
 - (CAShapeLayer*)indefiniteAnimatedLayer {
-    if(!_indefiniteAnimatedLayer) {
+/*    if(!_indefiniteAnimatedLayer) {
         CGPoint arcCenter = CGPointMake(self.radius+self.strokeThickness/2+5, self.radius+self.strokeThickness/2+5);
         CGRect rect = CGRectMake(0, 0, arcCenter.x*2, arcCenter.y*2);
         
@@ -964,7 +942,7 @@ static const CGFloat SVProgressHUDParallaxDepthPoints = 10;
         animationGroup.animations = @[strokeStartAnimation, strokeEndAnimation];
         [_indefiniteAnimatedLayer addAnimation:animationGroup forKey:@"progress"];
         
-    }
+    } */
     return _indefiniteAnimatedLayer;
 }
 
