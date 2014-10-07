@@ -573,7 +573,7 @@ static const CGFloat SVProgressHUDParallaxDepthPoints = 10;
             self.hudView.alpha = 0;
         }
         
-        [UIView animateWithDuration:0.15
+        [UIView animateWithDuration:0.0
                               delay:0
                             options:UIViewAnimationOptionAllowUserInteraction | UIViewAnimationCurveEaseOut | UIViewAnimationOptionBeginFromCurrentState
                          animations:^{
@@ -651,7 +651,7 @@ static const CGFloat SVProgressHUDParallaxDepthPoints = 10;
                                                       userInfo:userInfo];
     
     self.activityCount = 0;
-    [UIView animateWithDuration:0.15
+    [UIView animateWithDuration:0.0
                           delay:0
                         options:UIViewAnimationCurveEaseIn | UIViewAnimationOptionAllowUserInteraction
                      animations:^{
@@ -933,7 +933,7 @@ static const CGFloat SVProgressHUDParallaxDepthPoints = 10;
         maskLayer.frame = _indefiniteAnimatedLayer.bounds;
         _indefiniteAnimatedLayer.mask = maskLayer;
         
-        NSTimeInterval animationDuration = 1;
+        NSTimeInterval animationDuration = 0.0;
         CAMediaTimingFunction *linearCurve = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
         
         CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"transform.rotation"];
